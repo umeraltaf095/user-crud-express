@@ -1,55 +1,50 @@
 const example = require('../models/exampleModel');
+const mongoose = require('mongoose');
 
-// Writing Functions
+// Showing Hello World at / route
+const world = async (req, res) => {
+    res.send("Hello World");
+};
 
 // GET method to get data 
- 
 const getUser = async (req, res) => {
     try {
-            const user = await example.find();
-            res.json(user);    
+        const user = await example.find();
+        res.json(user);    
     } catch(error) {
         res.status(500).json({error: 'Failed to fetch data' });
-
     }
 };
 
+// DELETE method to delete a user
 const deleteUser = async (req, res) => {
-    
     try {
-         const name = req.params.name;
-        const user = await example.deleteOne({name});
+        const id = req.params.id;
 
-        if(user.deletedCount===0){
-          res.status(404).json({error:"Given user not found"});
+        // Use mongoose.Types.ObjectId directly
+        const user = await example.deleteOne({ _id: new mongoose.Types.ObjectId(id) });
+
+        if (user.deletedCount === 0) {
+            res.status(404).json({ error: "Given user not found" });
+            return;
         }
-        res.json({message: "Given user deleted successfully"});
 
-        
-    } catch(error) {
-        res.status(500).json({error: "Error occurs"});
+        res.json({ message: "Given user deleted successfully" });
+
+    } catch (error) {
+        res.status(500).json({ error: "Error occurs", details: error.message });
     }
-}
+};
 
+// POST method to add a new user
 const addUser = async(req, res) => {
     try {
         const user = req.body;
         const newUser = await example.create(user);
         res.json({message: "User added successfully", newUser});
-
-
     } catch(error) {
-
-          res.status(500).json({error: "Error occurs"});
+        res.status(500).json({error: "Error occurs"});
     }
-}
+};
 
-module.exports = {getUser, deleteUser , addUser};
-
-
-
-
-
-
-
-
+module.exports = {getUser, deleteUser , addUser, world};
