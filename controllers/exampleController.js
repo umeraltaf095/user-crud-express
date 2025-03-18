@@ -9,12 +9,13 @@ const world = async (req, res) => {
 // GET method to get data 
 const getUser = async (req, res) => {
     try {
-        const user = await example.find();
-        res.json(user);    
-    } catch(error) {
-        res.status(500).json({error: 'Failed to fetch data' });
+        const users = await example.find();  
+        res.json(users);
+    } catch (error) {
+        console.error(error);  // Log actual error
+        res.status(500).json({ error: 'Failed to fetch data', details: error.message });
     }
-};
+};;
 
 // DELETE method to delete a user
 const deleteUser = async (req, res) => {
